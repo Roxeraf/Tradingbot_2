@@ -19,7 +19,7 @@ export interface Balance {
 
 export interface Position {
   symbol: string
-  side: 'long' | 'short'
+  side: string  // 'long' or 'short'
   entry_price: number
   current_price?: number
   size: number
@@ -34,18 +34,18 @@ export interface Position {
 export interface Order {
   id: string
   symbol: string
-  type: string
-  side: 'buy' | 'sell'
+  type: string  // 'market' or 'limit'
+  side: string  // 'buy' or 'sell'
   amount: number
   price?: number
-  status: string
+  status: string  // 'open', 'filled', 'canceled', etc.
   timestamp: string
 }
 
 export interface Trade {
   id: number
   symbol: string
-  side: 'buy' | 'sell'
+  side: string  // 'buy' or 'sell'
   amount: number
   price: number
   pnl?: number
