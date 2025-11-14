@@ -6,13 +6,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from .routers import bot_control, trading, strategies
+from .routers import bot_control, trading, strategies, optimization, portfolio, ml
 
 # Create FastAPI app
 app = FastAPI(
     title="Crypto Trading Bot API",
     description="REST API for controlling and monitoring the crypto trading bot",
-    version="1.0.0",
+    version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -30,6 +30,9 @@ app.add_middleware(
 app.include_router(bot_control.router)
 app.include_router(trading.router)
 app.include_router(strategies.router)
+app.include_router(optimization.router)
+app.include_router(portfolio.router)
+app.include_router(ml.router)
 
 
 @app.on_event("startup")
@@ -53,8 +56,16 @@ async def root():
     """
     return {
         "name": "Crypto Trading Bot API",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "status": "running",
         "docs": "/docs",
-        "redoc": "/redoc"
+        "redoc": "/redoc",
+        "features": [
+            "Strategy Optimization (Grid Search, Random Search, Bayesian)",
+            "Walk-Forward Optimization",
+            "Advanced Portfolio Management",
+            "Portfolio Rebalancing",
+            "Machine Learning Integration",
+            "ML Model Training & Prediction"
+        ]
     }

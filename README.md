@@ -4,17 +4,40 @@ A production-ready, modular cryptocurrency trading bot with support for multiple
 
 ## 🚀 Features
 
+### Core Trading
 - **Multi-Exchange Support**: Binance, Coinbase, Kraken, and Bitpanda integration via CCXT
 - **Modular Architecture**: Clean separation of concerns with pluggable components
-- **Advanced Trading Strategies**: MA Crossover, RSI, MACD, and Bollinger Bands
-- **Comprehensive Backtesting Engine**: Test and optimize strategies on historical data
+- **Advanced Trading Strategies**: MA Crossover, RSI, MACD, Bollinger Bands, and ML-based
 - **Risk Management**: Sophisticated position sizing and portfolio risk management
-- **REST API**: Complete FastAPI backend for bot control and monitoring
-- **Web Dashboard**: Modern React + TypeScript UI for real-time monitoring
+- **Paper Trading**: Test strategies without risking real capital on testnet/sandbox
+
+### Strategy Optimization ⭐ NEW
+- **Grid Search**: Exhaustive parameter optimization
+- **Random Search**: Efficient random parameter sampling
+- **Bayesian Optimization**: Smart parameter exploration with Gaussian Processes
+- **Walk-Forward Optimization**: Out-of-sample validation to prevent overfitting
+
+### Portfolio Management ⭐ NEW
+- **8 Allocation Strategies**: Equal Weight, Risk Parity, Mean-Variance, Min Variance, Max Sharpe, Max Diversification, HRP
+- **Automatic Rebalancing**: Periodic, threshold-based, tolerance band, and volatility-based rebalancing
+- **Multi-Asset Support**: Manage portfolios across multiple cryptocurrencies
+
+### Machine Learning ⭐ NEW
+- **Feature Engineering**: 100+ technical, statistical, and time-based features
+- **ML Models**: Random Forest, XGBoost, LightGBM, Gradient Boosting, LSTM
+- **ML Strategy**: Trade using machine learning predictions with confidence thresholds
+- **Model Training Pipeline**: Complete end-to-end ML training and evaluation
+
+### Analytics & Monitoring
+- **Comprehensive Backtesting**: Test strategies on historical data with detailed metrics
+- **Performance Analytics**: Sharpe ratio, Sortino ratio, drawdown analysis, win rate, and more
 - **Real-time Monitoring**: Comprehensive logging and performance tracking
 - **Database Storage**: Persistent storage of trades, positions, and performance metrics
-- **Paper Trading**: Test strategies without risking real capital on testnet/sandbox
-- **Performance Analytics**: Sharpe ratio, Sortino ratio, drawdown analysis, and more
+
+### API & UI
+- **REST API**: Complete FastAPI backend with 30+ endpoints
+- **Web Dashboard**: Modern React + TypeScript UI for real-time monitoring
+- **API Documentation**: Interactive Swagger/OpenAPI docs at `/docs`
 - **Configurable**: Easy configuration via environment variables
 
 ## 📋 Installation
@@ -200,6 +223,248 @@ See deployment guide in documentation for:
 - Production checklist
 - Security best practices
 
+## 🔬 Strategy Optimization
+
+The bot now includes advanced strategy optimization algorithms to find optimal parameters:
+
+### Grid Search
+Exhaustive search over parameter combinations:
+```python
+from src.optimization.strategy_optimizer import StrategyOptimizer, OptimizationMethod
+
+optimizer = StrategyOptimizer(
+    data=historical_data,
+    strategy_name='ma_crossover',
+    symbol='BTC/USD',
+    optimization_metric='sharpe_ratio'
+)
+
+param_grid = {
+    'fast_period': [10, 20, 30],
+    'slow_period': [40, 50, 60]
+}
+
+results = optimizer.grid_search(param_grid)
+print(f"Best params: {results['best_params']}")
+```
+
+### Random Search
+Efficient random sampling from parameter distributions:
+```python
+param_distributions = {
+    'fast_period': (5, 30, 'int'),
+    'slow_period': (30, 100, 'int'),
+    'threshold': (0.6, 0.9)
+}
+
+results = optimizer.random_search(param_distributions, n_iterations=50)
+```
+
+### Bayesian Optimization
+Smart parameter exploration using Gaussian Processes:
+```python
+param_space = {
+    'fast_period': (5, 50, 'int'),
+    'slow_period': (50, 200, 'int'),
+    'threshold': (0.5, 0.9, 'float')
+}
+
+results = optimizer.bayesian_optimization(param_space, n_iterations=50)
+```
+
+### Walk-Forward Optimization
+Validates strategy robustness by testing on out-of-sample periods:
+```python
+from src.optimization.walk_forward import WalkForwardOptimizer
+
+wf_optimizer = WalkForwardOptimizer(
+    data=historical_data,
+    strategy_name='ma_crossover',
+    symbol='BTC/USD'
+)
+
+results = wf_optimizer.optimize(
+    param_space=param_space,
+    train_period_days=180,
+    test_period_days=60,
+    optimization_method=OptimizationMethod.RANDOM_SEARCH
+)
+
+print(f"Average in-sample Sharpe: {results['summary']['avg_train_metric']}")
+print(f"Average out-of-sample Sharpe: {results['summary']['avg_test_metric']}")
+```
+
+## 💼 Advanced Portfolio Management
+
+### Portfolio Allocation Strategies
+
+The bot supports 8 sophisticated allocation methods:
+
+1. **Equal Weight** - Simple equal allocation
+2. **Market Cap Weight** - Weighted by market capitalization
+3. **Risk Parity** - Equal risk contribution from each asset
+4. **Mean-Variance** - Markowitz portfolio optimization
+5. **Minimum Variance** - Lowest portfolio volatility
+6. **Maximum Sharpe** - Highest risk-adjusted returns
+7. **Maximum Diversification** - Optimal diversification ratio
+8. **Hierarchical Risk Parity** - HRP using hierarchical clustering
+
+```python
+from src.portfolio.allocator import PortfolioAllocator, AllocationStrategy
+
+allocator = PortfolioAllocator()
+
+# Calculate risk parity allocation
+weights = allocator.allocate(
+    symbols=['BTC/USD', 'ETH/USD', 'SOL/USD'],
+    strategy=AllocationStrategy.RISK_PARITY,
+    returns=historical_returns
+)
+
+print(f"Optimal weights: {weights}")
+```
+
+### Automatic Portfolio Rebalancing
+
+Multiple rebalancing strategies to maintain target allocation:
+
+```python
+from src.portfolio.rebalancer import PortfolioRebalancer, RebalancingStrategy
+
+rebalancer = PortfolioRebalancer(
+    target_weights={'BTC/USD': 0.5, 'ETH/USD': 0.5},
+    rebalancing_cost=0.001
+)
+
+# Threshold-based rebalancing
+trades = rebalancer.rebalance(
+    current_date=datetime.now(),
+    current_positions=current_positions,
+    current_prices=current_prices,
+    strategy=RebalancingStrategy.THRESHOLD,
+    threshold=0.05  # Rebalance if drift > 5%
+)
+
+if trades:
+    print(f"Rebalancing needed: {trades}")
+```
+
+## 🤖 Machine Learning Integration
+
+### Feature Engineering
+
+Automatically creates 100+ features from OHLCV data:
+
+```python
+from src.ml.feature_engineering import FeatureEngineer
+
+engineer = FeatureEngineer()
+
+# Create all features
+features = engineer.create_all_features(
+    data=ohlcv_data,
+    include_price_features=True,
+    include_technical_features=True,
+    include_statistical_features=True,
+    include_time_features=True
+)
+
+# Create target variable
+features = engineer.create_target_variable(
+    features,
+    target_type='direction',  # or 'returns', 'classification'
+    forward_periods=1
+)
+```
+
+### ML Model Training
+
+Train machine learning models for price prediction:
+
+```python
+from src.ml.model_trainer import MLModelTrainer, ModelType
+
+# Train Random Forest
+trainer = MLModelTrainer(
+    model_type=ModelType.RANDOM_FOREST,
+    task='classification'
+)
+
+X_train, X_test, y_train, y_test = trainer.prepare_data(
+    data=features,
+    feature_columns=feature_columns,
+    target_column='target',
+    train_size=0.8
+)
+
+trainer.train(X_train, y_train, n_estimators=100, max_depth=10)
+metrics = trainer.evaluate(X_test, y_test)
+
+print(f"Accuracy: {metrics['accuracy']:.2%}")
+print(f"F1 Score: {metrics['f1']:.2f}")
+
+# Save model
+trainer.save_model('models/btc_predictor.pkl')
+```
+
+### ML-Based Trading Strategy
+
+Use trained models for trading decisions:
+
+```python
+from src.ml.ml_strategy import MLStrategy
+
+# Initialize ML strategy
+ml_strategy = MLStrategy({
+    'model_path': 'models/btc_predictor.pkl',
+    'model_type': 'random_forest',
+    'confidence_threshold': 0.7,
+    'stop_loss_pct': 0.02,
+    'take_profit_pct': 0.04
+})
+
+# Generate signal
+signal = ml_strategy.generate_signal(recent_data)
+
+if signal.is_actionable():
+    print(f"Signal: {signal.signal_type.value}")
+    print(f"Confidence: {signal.confidence:.2%}")
+    print(f"Entry: ${signal.entry_price:.2f}")
+```
+
+### Supported ML Models
+
+- **Random Forest** - Robust ensemble method
+- **XGBoost** - High-performance gradient boosting
+- **LightGBM** - Fast and memory-efficient
+- **Gradient Boosting** - Reliable baseline
+- **LSTM** - Deep learning for temporal patterns
+
+## 🌐 API Endpoints
+
+The REST API has been expanded with new endpoints:
+
+### Strategy Optimization
+- `POST /optimization/optimize` - Run optimization
+- `POST /optimization/walk-forward` - Walk-forward optimization
+- `GET /optimization/methods` - Available methods
+- `GET /optimization/metrics` - Available metrics
+
+### Portfolio Management
+- `POST /portfolio/allocate` - Calculate allocation
+- `POST /portfolio/compare-allocations` - Compare strategies
+- `POST /portfolio/rebalance` - Calculate rebalancing trades
+- `GET /portfolio/allocation-strategies` - List strategies
+- `GET /portfolio/rebalancing-strategies` - List rebalancing methods
+
+### Machine Learning
+- `POST /ml/train` - Train ML model
+- `POST /ml/predict` - Make predictions
+- `POST /ml/predict-direction` - Predict price direction
+- `POST /ml/engineer-features` - Generate features
+- `GET /ml/model-types` - Available models
+- `GET /ml/feature-types` - Available feature types
+
 ## ⚠️ Disclaimer
 
 **This software is for educational purposes only. Trading cryptocurrencies carries significant risk. Only trade with capital you can afford to lose. The authors are not responsible for any financial losses.**
@@ -221,11 +486,15 @@ MIT License
 - [x] **Multi-exchange support (Binance, Coinbase, Kraken)**
 - [x] **REST API for bot control**
 
+- [x] **Strategy Optimization Algorithms (Grid Search, Random Search, Bayesian)**
+- [x] **Walk-Forward Optimization**
+- [x] **Advanced Portfolio Management (8 allocation strategies)**
+- [x] **Automatic Portfolio Rebalancing**
+- [x] **Machine Learning Integration (Random Forest, XGBoost, LSTM)**
+- [x] **ML-based Trading Strategy**
+
 ### In Progress 🚧
 - [ ] Real-time alerts (Telegram/Discord)
-- [ ] Strategy optimization algorithms
-- [ ] Advanced portfolio management
-- [ ] Machine learning integration
 
 ---
 
