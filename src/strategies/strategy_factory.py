@@ -4,6 +4,9 @@ Factory pattern for creating strategy instances
 from typing import Dict, Any
 from .base_strategy import BaseStrategy
 from .moving_average_strategy import MovingAverageCrossoverStrategy
+from .rsi_strategy import RSIStrategy
+from .macd_strategy import MACDStrategy
+from .bollinger_bands_strategy import BollingerBandsStrategy
 
 
 class StrategyFactory:
@@ -15,10 +18,14 @@ class StrategyFactory:
         'movingaveragecrossover': MovingAverageCrossoverStrategy,
         'ma_crossover': MovingAverageCrossoverStrategy,
         'sma_crossover': MovingAverageCrossoverStrategy,
-        # Add more strategies here as they are implemented
-        # 'rsi': RSIStrategy,
-        # 'bollinger': BollingerBandsStrategy,
-        # 'macd': MACDStrategy,
+        'rsi': RSIStrategy,
+        'rsi_strategy': RSIStrategy,
+        'macd': MACDStrategy,
+        'macd_strategy': MACDStrategy,
+        'bollinger': BollingerBandsStrategy,
+        'bollingerbands': BollingerBandsStrategy,
+        'bollinger_bands': BollingerBandsStrategy,
+        'bb': BollingerBandsStrategy,
     }
 
     @classmethod
