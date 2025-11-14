@@ -4,6 +4,9 @@ Factory pattern for creating exchange instances
 from typing import Optional
 from .base_exchange import BaseExchange
 from .bitpanda_exchange import BitpandaExchange
+from .binance_exchange import BinanceExchange
+from .coinbase_exchange import CoinbaseExchange
+from .kraken_exchange import KrakenExchange
 
 
 class ExchangeFactory:
@@ -13,10 +16,10 @@ class ExchangeFactory:
 
     _exchanges = {
         'bitpanda': BitpandaExchange,
-        # Add more exchanges here as they are implemented
-        # 'binance': BinanceExchange,
-        # 'coinbase': CoinbaseExchange,
-        # 'kraken': KrakenExchange,
+        'binance': BinanceExchange,
+        'coinbase': CoinbaseExchange,
+        'coinbasepro': CoinbaseExchange,  # Alias for Coinbase Advanced Trade
+        'kraken': KrakenExchange,
     }
 
     @classmethod
